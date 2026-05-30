@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/main}">
+<head>
+    <title layout:fragment="title" th:text="${chat.name} + ' - Chat'">Chat</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <h1 th:text="${chat.name}">Chat</h1>
+
+    <div id="message-container">
+        <div th:each="msg : ${messages}" class="message">
+            <strong th:text="${msg.sender.username}"></strong>
+            <span th:text="${msg.content}"></span>
+            <small th:text="${#temporals.format(msg.sentAt, 'dd.MM.yyyy HH:mm')}"></small>
+            <span th:if="${msg.edited}" class="edited">(edited)</span>
+        </div>
+    </div>
+
+    <form id="message-form" class="chat-form">
+        <textarea id="message-content" rows="3" placeholder="Type your message..."></textarea>
+        <button type="submit" class="btn btn-primary">Send</button>
+    </form>
+</div>
+
+<th:block layout:fragment="scripts">
+    <script>
+        const chatId = /*[[${chat.id}]]*/ '0';
+        const form = document.getElementById('message-form');
+        const container = document.getElementById('message-container');
+        const textarea = document.getElementById('message-content');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const content = textarea.value.trim();
+            if (!content) return;
+
+            try {
+                const response = await fetch('/api/chat/' + chatId + '/messages', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ content: content })
+                });
+                if (response.ok) {
+                    const msg = await response.json();
+                    const div = document.createElement('div');
+                    div.className = 'message';
+                    div.innerHTML = `<strong>${msg.sender.username}</strong> <span>${msg.content}</span>
+                                         <small>${new Date(msg.sentAt).toLocaleString()}</small>`;
+                    container.insertBefore(div, container.firstChild);
+                    textarea.value = '';
+                } else {
+                    alert('Error sending message');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Network error');
+            }
+        });
+    </script>
+</th:block>
+</body>
+</html>

@@ -1,0 +1,8 @@
+@media (max-width: 480px) {
+    .room-grid { grid-template-columns: 1fr; }
+    .page-header { flex-direction: column; gap: 15px; align-items: flex-start; }
+    .form-container { padding: 20px; }
+    .message { max-width: 85%; }
+    .header-actions { font-size: 0.85rem; }
+    .header-actions .btn { padding: 8px 14px; font-size: 0.8rem; }
+}

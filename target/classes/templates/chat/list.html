@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/main}">
+<head>
+    <title layout:fragment="title">My Chats - PrivetMedved</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <h1>My Chats</h1>
+    <div th:if="${chats == null || chats.isEmpty()}">
+        <p>You don't have any chats yet.</p>
+    </div>
+    <div th:each="chat : ${chats}">
+        <div class="chat-item">
+            <a th:href="@{/chat/{id}(id=${chat.id})}">
+                <strong th:text="${chat.name}">Chat name</strong>
+                <span th:if="${chat.isDirect}" class="badge">direct</span>
+            </a>
+        </div>
+    </div>
+    <a th:href="@{/chat/create}" class="btn btn-primary">New Chat</a>
+</div>
+</body>
+</html>

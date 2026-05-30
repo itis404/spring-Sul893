@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/main}">
+<head>
+    <title layout:fragment="title">New Chat - PrivetMedved</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <h1>Start a Chat</h1>
+    <form th:action="@{/chat/create}" th:object="${chatForm}" method="post">
+        <div class="form-group">
+            <label for="username">Username of the person:</label>
+            <input type="text" id="username" th:field="*{username}" required>
+            <span class="error" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></span>
+        </div>
+        <div class="form-group">
+            <label for="name">Chat name (optional):</label>
+            <input type="text" id="name" th:field="*{name}" placeholder="Leave empty for default">
+        </div>
+        <button type="submit" class="btn btn-primary">Create Chat</button>
+    </form>
+</div>
+</body>
+</html>

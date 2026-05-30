@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/main}">
+<head>
+    <title layout:fragment="title">Admin Dashboard - PrivetMedved</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <h1>Admin Dashboard</h1>
+        <div class="info-card">
+            <h3>Active Users</h3>
+            <table class="admin-table" th:if="${users != null && !users.isEmpty()}">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Joined</th>
+                        <th>Last Login</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="user : ${users}">
+                        <td th:text="${user.id}">1</td>
+                        <td><a th:href="@{/profile/{id}(id=${user.id})}" th:text="${user.username}">user</a></td>
+                        <td th:text="${user.email}">email</td>
+                        <td th:text="${#temporals.format(user.createdAt, 'dd.MM.yyyy')}">date</td>
+                        <td th:text="${user.lastLogin != null ? #temporals.format(user.lastLogin, 'dd.MM.yyyy HH:mm') : 'Never'}">last</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

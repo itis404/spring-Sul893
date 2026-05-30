@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/main}">
+<head>
+    <title layout:fragment="title" th:text="${profile.displayName} + '\'s Profile - PrivetMedved'">Profile</title>
+    <th:block layout:fragment="head-extra">
+        <style th:if="${profile.customCss != null}" th:utext="${profile.customCss}"></style>
+        <style th:unless="${profile.customCss}">
+            .profile-page {
+                --bg-color: #1a1a2e;
+                --text-color: #eaeaea;
+                --accent-color: #6c63ff;
+                --profile-bg: <th:block th:text="${profile.backgroundColor} + '">#1a1a2e</th:block>';
+                --profile-text: <th:block th:text="${profile.textColor} + '">#eaeaea</th:block>';
+                --profile-accent: <th:block th:text="${profile.accentColor} + '">#6c63ff</th:block>';
+            }
+            .custom-profile { background-color: var(--profile-bg); color: var(--profile-text); }
+            .custom-profile a { color: var(--profile-accent); }
+            .custom-profile .btn-primary { background-color: var(--profile-accent); }
+            <th:block th:if="${profile.backgroundImageUrl != null}">
+            .custom-profile-header { background-image: url(<th:block th:text="${profile.backgroundImageUrl}"></th:block>); }
+            </th:block>
+        </style>
+    </th:block>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="profile-page custom-profile">
+            <div class="custom-profile-header">
+                <div class="profile-avatar">
+                    <img th:src="${profile.avatarUrl} ?: @{/images/default-avatar.png}" alt="Avatar"
+                         onerror="this.src='https://via.placeholder.com/150'">
+                </div>
+                <div class="profile-info">
+                    <h1 th:text="${profile.displayName} ?: ${profileUser.username}">Display Name</h1>
+                    <p class="username" th:text="'@' + ${profileUser.username}">@username</p>
+                    <p th:text="${profile.bio}" th:if="${profile.bio}">Bio</p>
+                    <p th:text="${#temporals.format(profileUser.createdAt, 'dd.MM.yyyy')}">joined</p>
+                </div>
+            </div>
+
+            <div class="profile-content">
+                <div class="profile-section">
+                    <h2 th:text="${profile.displayName ?: profileUser.username} + '\'s Posts'">Posts</h2>
+                    <div class="post-list">
+                        <div class="post-item" th:each="post : ${posts.content}">
+                            <div class="post-content">
+                                <h3><a th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}">Title</a></h3>
+                                <div class="post-meta">
+                                    <span th:text="${#temporals.format(post.createdAt, 'dd.MM.yyyy')}">date</span>
+                                    <span th:text="${post.commentCount} + ' comments'">comments</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="profile-section" th:if="${rooms != null && !rooms.isEmpty()}">
+                    <h2>Rooms</h2>
+                    <div class="room-grid">
+                        <div class="room-card" th:each="room : ${rooms}">
+                            <h3><a th:href="@{/rooms/{slug}(slug=${room.slug})}" th:text="${room.name}">Room</a></h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
