@@ -1,0 +1,28 @@
+<aside class="sidebar-container" xmlns:th="http://www.thymeleaf.org"
+       xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+       th:fragment="sidebar">
+    <div class="sidebar-card" sec:authorize="isAuthenticated()">
+        <h3>Quick Actions</h3>
+        <ul class="sidebar-links">
+            <li><a th:href="@{/posts/create}">New Post</a></li>
+            <li><a th:href="@{/rooms/create}">Create Room</a></li>
+            <li><a th:href="@{/rooms/my}">My Rooms</a></li>
+            <li><a th:href="@{/rooms}">Browse Rooms</a></li>
+            <li><a th:href="@{/posts}">All Posts</a></li>
+            <li><a th:href="@{/profile}">My Profile</a></li>
+            <li><a th:href="@{/profile/edit}">Edit Profile</a></li>
+            <li><a th:href="@{/chat}">My Chats</a></li>
+        </ul>
+    </div>
+
+    <div class="sidebar-card" sec:authorize="!isAuthenticated()">
+        <h3>Welcome, stranger</h3>
+        <p>Join the community to start posting and chatting.</p>
+        <a th:href="@{/auth/register}" class="btn btn-primary btn-block">Register Now</a>
+    </div>
+
+    <div class="sidebar-card">
+        <h3>About</h3>
+        <p>PrivetMedved is a hybrid social network and forum where you can create customizable profiles, join themed rooms, and discuss anything.</p>
+    </div>
+</aside>

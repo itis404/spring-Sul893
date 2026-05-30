@@ -1,0 +1,124 @@
+CREATE TABLE IF NOT EXISTS users (
+    id BIGSERIAL PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    enabled BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    last_login TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS profiles (
+    id BIGSERIAL PRIMARY KEY,
+    user_id BIGINT NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,
+    display_name VARCHAR(100),
+    bio TEXT,
+    avatar_url VARCHAR(500),
+    background_color VARCHAR(7) DEFAULT '#1a1a2e',
+    text_color VARCHAR(7) DEFAULT '#eaeaea',
+    accent_color VARCHAR(7) DEFAULT '#6c63ff',
+    font_family VARCHAR(50),
+    custom_css TEXT,
+    background_image_url VARCHAR(500),
+    profile_layout VARCHAR(20) DEFAULT 'default'
+);
+
+CREATE TABLE IF NOT EXISTS roles (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(30) NOT NULL UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS user_roles (
+    user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    role_id BIGINT NOT NULL REFERENCES roles(id) ON DELETE CASCADE,
+    PRIMARY KEY (user_id, role_id)
+);
+
+CREATE TABLE IF NOT EXISTS rooms (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    slug VARCHAR(50) NOT NULL UNIQUE,
+    description TEXT,
+    is_private BOOLEAN NOT NULL DEFAULT FALSE,
+    max_participants INTEGER,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    creator_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS room_participants (
+    room_id BIGINT NOT NULL REFERENCES rooms(id) ON DELETE CASCADE,
+    user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    PRIMARY KEY (room_id, user_id)
+);
+
+CREATE TABLE IF NOT EXISTS tags (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(50) NOT NULL UNIQUE,
+    usage_count INTEGER NOT NULL DEFAULT 0
+);
+
+CREATE TABLE IF NOT EXISTS room_tags (
+    room_id BIGINT NOT NULL REFERENCES rooms(id) ON DELETE CASCADE,
+    tag_id BIGINT NOT NULL REFERENCES tags(id) ON DELETE CASCADE,
+    PRIMARY KEY (room_id, tag_id)
+);
+
+CREATE TABLE IF NOT EXISTS posts (
+    id BIGSERIAL PRIMARY KEY,
+    title VARCHAR(200) NOT NULL,
+    content TEXT NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP,
+    vote_count INTEGER NOT NULL DEFAULT 0,
+    pinned BOOLEAN NOT NULL DEFAULT FALSE,
+    author_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    room_id BIGINT NOT NULL REFERENCES rooms(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS post_tags (
+    post_id BIGINT NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
+    tag_id BIGINT NOT NULL REFERENCES tags(id) ON DELETE CASCADE,
+    PRIMARY KEY (post_id, tag_id)
+);
+
+CREATE TABLE IF NOT EXISTS comments (
+    id BIGSERIAL PRIMARY KEY,
+    content TEXT NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP,
+    author_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    post_id BIGINT NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
+    parent_id BIGINT REFERENCES comments(id) ON DELETE SET NULL,
+    vote_count INTEGER NOT NULL DEFAULT 0
+);
+
+CREATE TABLE IF NOT EXISTS votes (
+    id BIGSERIAL PRIMARY KEY,
+    value INTEGER NOT NULL,
+    user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    post_id BIGINT NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
+    UNIQUE (user_id, post_id)
+);
+
+CREATE TABLE IF NOT EXISTS chats (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    is_direct BOOLEAN NOT NULL DEFAULT FALSE,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    room_id BIGINT REFERENCES rooms(id) ON DELETE SET NULL
+);
+
+CREATE TABLE IF NOT EXISTS chat_participants (
+    chat_id BIGINT NOT NULL REFERENCES chats(id) ON DELETE CASCADE,
+    user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    PRIMARY KEY (chat_id, user_id)
+);
+
+CREATE TABLE IF NOT EXISTS messages (
+    id BIGSERIAL PRIMARY KEY,
+    content TEXT NOT NULL,
+    sent_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    is_edited BOOLEAN NOT NULL DEFAULT FALSE,
+    sender_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    chat_id BIGINT NOT NULL REFERENCES chats(id) ON DELETE CASCADE
+);

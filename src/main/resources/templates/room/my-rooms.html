@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/main}">
+<head>
+    <title layout:fragment="title">My Rooms - PrivetMedved</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="page-header">
+            <h1>My Rooms</h1>
+            <a th:href="@{/rooms/create}" class="btn btn-primary">Create Room</a>
+        </div>
+
+        <section th:if="${createdRooms != null && !createdRooms.isEmpty()}">
+            <h2>Rooms I Created</h2>
+            <div class="room-grid">
+                <div class="room-card" th:each="room : ${createdRooms}">
+                    <h3><a th:href="@{/rooms/{slug}(slug=${room.slug})}" th:text="${room.name}">Room</a></h3>
+                    <div class="room-meta">
+                        <span th:text="${room.participants.size()} + ' members'">members</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section th:if="${joinedRooms != null && !joinedRooms.isEmpty()}">
+            <h2>Rooms I Joined</h2>
+            <div class="room-grid">
+                <div class="room-card" th:each="room : ${joinedRooms}">
+                    <h3><a th:href="@{/rooms/{slug}(slug=${room.slug})}" th:text="${room.name}">Room</a></h3>
+                    <div class="room-meta">
+                        <span th:text="${room.participants.size()} + ' members'">members</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <p th:if="${(createdRooms == null || createdRooms.isEmpty()) && (joinedRooms == null || joinedRooms.isEmpty())}">
+            You haven't created or joined any rooms yet.
+        </p>
+    </div>
+</body>
+</html>

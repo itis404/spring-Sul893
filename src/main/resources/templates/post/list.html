@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/main}">
+<head>
+    <title layout:fragment="title">Posts - PrivetMedved</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="page-header">
+            <h1>Latest Posts</h1>
+            <a th:href="@{/posts/create}" class="btn btn-primary" sec:authorize="isAuthenticated()">New Post</a>
+        </div>
+
+        <section class="featured-rooms" th:if="${mostDiscussed != null && !mostDiscussed.isEmpty()}">
+            <h2>Most Discussed</h2>
+            <div class="room-grid">
+                <div class="room-card room-card-highlight" th:each="post : ${mostDiscussed}">
+                    <h3><a th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}">Post</a></h3>
+                    <p th:text="'by ' + ${post.authorUsername} + ' in ' + ${post.roomName}">meta</p>
+                </div>
+            </div>
+        </section>
+
+        <div class="post-list">
+            <div class="post-item" th:each="post : ${posts}">
+                <div class="post-votes" th:attr="data-post-id=${post.id}">
+                    <span class="vote-count" th:text="${post.voteCount}">0</span>
+                </div>
+                <div class="post-content">
+                    <h3><a th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}">Title</a></h3>
+                    <div class="post-meta">
+                        <span th:text="${post.authorUsername} + ' in ' + ${post.roomName}">meta</span>
+                        <span th:text="${post.commentCount} + ' comments'">0 comments</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

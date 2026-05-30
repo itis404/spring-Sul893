@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/main}">
+<head>
+    <title layout:fragment="title">My Profile - PrivetMedved</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="profile-page">
+            <h1>My Account</h1>
+            <div class="profile-actions">
+                <a th:href="@{/profile/edit}" class="btn btn-primary">Edit Profile</a>
+                <a th:href="@{/profile/{id}(id=${user.id})}" class="btn btn-outline">View Public Profile</a>
+            </div>
+            <div class="info-card">
+                <h3>Account Info</h3>
+                <p><strong>Username:</strong> <span th:text="${user.username}"></span></p>
+                <p><strong>Email:</strong> <span th:text="${user.email}"></span></p>
+                <p><strong>Joined:</strong> <span th:text="${#temporals.format(user.createdAt, 'dd.MM.yyyy')}"></span></p>
+                <p th:if="${isAdmin}"><span class="badge badge-admin">Admin</span></p>
+                <p th:if="${isModerator}"><span class="badge badge-moderator">Moderator</span></p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

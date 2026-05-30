@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/main}">
+<head>
+    <title layout:fragment="title">PrivetMedved</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="hero">
+            <h1>Welcome to PrivetMedved</h1>
+            <p>A place to connect, discuss, and customize your space.</p>
+            <div class="hero-actions">
+                <a th:href="@{/rooms}" class="btn btn-primary">Explore Rooms</a>
+                <a th:href="@{/auth/register}" class="btn btn-secondary">Join Now</a>
+            </div>
+        </div>
+
+        <section class="featured-rooms">
+            <h2>Active Rooms</h2>
+            <div class="room-grid">
+                <div class="room-card" th:each="room : ${rooms}" th:if="${rooms != null && !rooms.isEmpty()}">
+                    <h3><a th:href="@{/rooms/{slug}(slug=${room.slug})}" th:text="${room.name}">Room Name</a></h3>
+                    <p th:text="${room.description}" th:if="${room.description}">Description</p>
+                    <div class="room-meta">
+                        <span th:text="'Participants: ' + ${room.participants?.size()}">0</span>
+                    </div>
+                </div>
+                <p th:if="${rooms == null || rooms.isEmpty()}">No rooms yet. Be the first to create one!</p>
+            </div>
+        </section>
+        <section class="weather-widget" th:if="${weather != null}">
+            <h2>Weather in <span th:text="${weather.city}">Moscow</span></h2>
+            <p th:text="${weather.temperature} + '°C'"></p>
+            <p th:text="${weather.description}"></p>
+        </section>
+    </div>
+</body>
+</html>

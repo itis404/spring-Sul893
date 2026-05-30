@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/main}">
+<head>
+    <title layout:fragment="title">500 Internal Server Error - PrivetMedved</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="error-page">
+            <h1>500</h1>
+            <p>Internal Server Error</p>
+            <p th:text="${message} ?: 'Something went wrong. Please try again later.'">Error message</p>
+            <a th:href="@{/}" class="btn btn-primary">Go Home</a>
+        </div>
+    </div>
+</body>
+</html>
